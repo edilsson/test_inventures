@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class URLShortener(BaseModel):
@@ -6,8 +7,8 @@ class URLShortener(BaseModel):
 
     original_url: str
     alias: str
-    created_at: str
-    expires_at: str
+    created_at: datetime
+    expires_at: datetime
     clicks: int = 0
 
     class Config:
