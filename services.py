@@ -65,3 +65,30 @@ def add_click(db: Session, url: ShortenedURL) -> None:
     url.clicks += 1
     db.commit()
     db.refresh(url)
+
+
+# TODO: Check a more scalable version than this
+ORDERING_OPTIONS = {
+    "-clicks": ShortenedURL.clicks.desc(),
+    "clicks": ShortenedURL.clicks.asc(),
+    "-original_url": ShortenedURL.original_url.desc(),
+    "original_url": ShortenedURL.original_url.asc(),
+    "-alias": ShortenedURL.alias.desc(),
+    "alias": ShortenedURL.alias.asc(),
+}
+
+def get_stats(
+    db: Session, status: str | None, sort_by: str | None,
+    page: int | None, size: int | None,
+) -> list:
+    """Get stats for all or filtered urls."""
+    query = db.query(ShortenedURL)
+    if status == "ACTIVE":
+        query = query.filter(ShortenedURL.expires_at > datetime.now(tz=UTC))
+    elif status == "INACTIVE":
+        query = query.filter(ShortenedURL.expires_at <= datetime.now(tz=UTC))
+
+    if sort_by in ORDERING_OPTIONS:
+        query = query.order_by(ORDERING_OPTIONS[sort_by])
+
+    return query.offset((page - 1) * page).limit(size).all()
