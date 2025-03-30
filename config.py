@@ -12,10 +12,13 @@ class Settings(BaseSettings):
     db_url: str = "sqlite:///./test.db"
 
     class Config:
+        """Environment configuration."""
+
         env_file = "test_inventures/.env"
 
 @lru_cache
 def get_settings() -> Settings:
+    """Get application settings."""
     settings = Settings()
     print(f"Loading settings for environment: {settings.app_env}")
     return settings
