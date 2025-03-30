@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from test_inventures.models import Base, ShortenedURL
 from typing import Generator
 from datetime import datetime, UTC
+import string
+import secrets
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,9 +23,10 @@ def raise_exception(detail: str, code: int = 400):
 
 def create_shortened_url(db, url: str, alias: str = None) -> ShortenedURL:
     """Create a shortened URL entry in the database."""
-
     if not alias:
         alias = generate_random_alias()
+        while not is_alias_available(db=db, alias=alias):
+            alias = generate_random_alias()
 
     url = ShortenedURL(original_url=url, alias=alias)
     db.add(url)
@@ -32,15 +35,10 @@ def create_shortened_url(db, url: str, alias: str = None) -> ShortenedURL:
 
     return url
 
-def generate_random_alias() -> str:
-    """Generate a random alias.
-
-    Generate a random alias for the shortened URL
-    and check if it doesn't exists on the database.
-    """
-    # Placeholder for random alias generation logic
-    # In a real implementation, you would generate a random string here
-    return "random_alias"
+def generate_random_alias(length: int = 6) -> str:
+    """Generate a random alias."""
+    chars = string.ascii_letters + string.digits
+    return "".join(secrets.choice(chars) for _ in range(length))
 
 
 def get_by_alias(db, alias: str) -> ShortenedURL:
