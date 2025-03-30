@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     class Config:
         """Environment configuration."""
 
-        env_file = "test_inventures/.env"
+        env_file = "back_inventures/.env"
 
 @lru_cache
 def get_settings() -> Settings:
