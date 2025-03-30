@@ -1,14 +1,17 @@
+from __future__ import annotations
 from test_inventures.database import SessionLocal, engine
 from fastapi import HTTPException
 from test_inventures.models import Base, ShortenedURL
 from typing import Generator
 from datetime import datetime, UTC
+from sqlalchemy.orm import Session
 import string
 import secrets
 
 Base.metadata.create_all(bind=engine)
 
 def get_db() -> Generator:
+    """Get Database session generator."""
     db = SessionLocal()
     try:
         yield db
@@ -16,12 +19,12 @@ def get_db() -> Generator:
         db.close()
 
 
-def raise_exception(detail: str, code: int = 400):
+def raise_exception(detail: str, code: int = 400) -> None:
     """Raise an HTTP exception with a given detail and status code."""
     raise HTTPException(status_code=code, detail=detail)
 
 
-def create_shortened_url(db, url: str, alias: str = None) -> ShortenedURL:
+def create_shortened_url(db: Session, url: str, alias: str | None) -> ShortenedURL:
     """Create a shortened URL entry in the database."""
     if not alias:
         alias = generate_random_alias()
@@ -41,7 +44,7 @@ def generate_random_alias(length: int = 6) -> str:
     return "".join(secrets.choice(chars) for _ in range(length))
 
 
-def get_by_alias(db, alias: str) -> ShortenedURL:
+def get_by_alias(db: Session, alias: str) -> ShortenedURL:
     """Get a shortened URL entry by its alias."""
     return (
         db.query(ShortenedURL)
@@ -52,12 +55,12 @@ def get_by_alias(db, alias: str) -> ShortenedURL:
     )
 
 
-def is_alias_available(db, alias: str) -> bool:
+def is_alias_available(db: Session, alias: str) -> bool:
     """Check if an alias is available."""
     return not get_by_alias(db=db, alias=alias)
 
 
-def add_click(db, url: ShortenedURL) -> None:
+def add_click(db: Session, url: ShortenedURL) -> None:
     """Increment the click count for a shortened URL."""
     url.clicks += 1
     db.commit()
