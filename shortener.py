@@ -4,21 +4,27 @@ from test_inventures.dataclasses import URLShortener
 from test_inventures import services
 
 api = FastAPI()
+ALIAS_MAX_LENGTH = 10
 
-@api.post("/shorten", response_model=URLShortener)
+@api.post("/shorten")
 async def shorten_url(
-    url: str, custom_alias: str = None, db: Session = Depends(services.get_db)
-    ):
+    request: URLShortenerRequest, db: Annotated[Session, Depends(services.get_db)],
+) -> URLShortener:
     """Shorten a given URL with an optional custom alias."""
-    # Base validations
-    if not validators.url(url):
+    if not validators.url(request.url):
         services.raise_exception(detail="The provided URL is invalid.")
-    if custom_alias and not validators.slug(custom_alias):
-        services.raise_exception(detail="The custom alias is invalid.")
-    if custom_alias and not services.is_alias_available(custom_alias):
-        services.raise_exception(detail="You cannot use that alias.")
+    if request.custom_alias:
+        if (
+            not validators.slug(request.custom_alias)
+            or len(request.custom_alias) > ALIAS_MAX_LENGTH
+        ):
+            services.raise_exception(detail="The custom alias is invalid.")
+        if not services.is_alias_available(db=db, alias=request.custom_alias):
+            services.raise_exception(detail="You cannot use that alias.")
 
-    return services.create_shortened_url(db=db, url=url, alias=custom_alias)
+    return services.create_shortened_url(
+        db=db, url=request.url, alias=request.custom_alias,
+    )
 
 @api.get("/stats/{url}")
 async def get_url_stats(url: str) -> dict:
