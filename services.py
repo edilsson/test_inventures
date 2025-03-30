@@ -56,10 +56,11 @@ def get_by_alias(db, alias: str) -> ShortenedURL:
 
 def is_alias_available(db, alias: str) -> bool:
     """Check if an alias is available."""
-    return not (
-        db.query(ShortenedURL)
-        .filter(
-            ShortenedURL.alias == alias,
-            ShortenedURL.expires_at > datetime.now(tz=UTC),
-            ).first()
-    )
+    return not get_by_alias(db=db, alias=alias)
+
+
+def add_click(db, url: ShortenedURL) -> None:
+    """Increment the click count for a shortened URL."""
+    url.clicks += 1
+    db.commit()
+    db.refresh(url)
