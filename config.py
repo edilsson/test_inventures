@@ -7,12 +7,12 @@ class Settings(BaseSettings):
 
     app_name: str = "Inventures URL Shortener - Local"
     app_version: str = "1.0.0"
-    app_env: str = "development"
+    app_env: str = "local"
     base_url: str = "http://localhost:8000"
     db_url: str = "sqlite:///./test.db"
 
     class Config:
-        env_file = ".env"
+        env_file = "test_inventures/.env"
 
 @lru_cache
 def get_settings() -> Settings:
