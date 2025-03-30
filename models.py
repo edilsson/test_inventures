@@ -1,8 +1,14 @@
+"""Model classes for database creation/handling."""
+from datetime import UTC, datetime, timedelta
+
+from sqlalchemy import Column, DateTime, Integer, String
+
 from .database import Base
-from sqlalchemy import Column, Integer, String, DateTime
-from datetime import datetime, timedelta, UTC
+
 
 class ShortenedURL(Base):
+    """Model class for shortened URLs."""
+
     __tablename__ = "shortened_urls"
 
     id = Column(Integer, primary_key=True)

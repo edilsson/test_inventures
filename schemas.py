@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+"""Schemas for use in requests and responses."""
 from datetime import datetime
+
+from pydantic import BaseModel
 
 
 class URLShortener(BaseModel):
-    """Model for URL shortener."""
+    """Schema for URL shortener."""
 
     original_url: str
     alias: str
@@ -12,10 +14,12 @@ class URLShortener(BaseModel):
     clicks: int = 0
 
     class Config:
+        """Configuration for URL shortener."""
+
         from_attributes = True
 
 class URLShortenerRequest(BaseModel):
-    """Model for URL shortener request."""
+    """Schema for URL shortener request."""
 
     url: str
     custom_alias: str = None

@@ -1,14 +1,22 @@
+"""Shortener API Calls for application."""
 from __future__ import annotations
+
+from typing import TYPE_CHECKING, Annotated
+
 import validators
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
-from test_inventures.schemas import URLShortener, URLShortenerRequest
+
 from test_inventures import services
-from sqlalchemy.orm import Session
-from typing import Annotated
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
+
+    from test_inventures.schemas import URLShortener, URLShortenerRequest
 
 api = FastAPI()
 ALIAS_MAX_LENGTH = 10
+
 
 @api.post("/shorten")
 async def shorten_url(
@@ -30,6 +38,7 @@ async def shorten_url(
         db=db, url=request.url, alias=request.custom_alias,
     )
 
+
 @api.get("/stats")
 async def get_url_stats(
     db: Annotated[Session, Depends(services.get_db)],
@@ -40,6 +49,7 @@ async def get_url_stats(
     return services.get_stats(
         db=db, status=status, sort_by=sort_by, page=page, size=size,
     )
+
 
 @api.get("/{alias}")
 async def redirect_to_url(

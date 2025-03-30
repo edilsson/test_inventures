@@ -1,12 +1,21 @@
+"""Utility functions for database and response handling."""
 from __future__ import annotations
-from test_inventures.database import SessionLocal, engine
-from fastapi import HTTPException
-from test_inventures.models import Base, ShortenedURL
-from typing import Generator
-from datetime import datetime, UTC
-from sqlalchemy.orm import Session
-import string
+
 import secrets
+import string
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING
+
+from fastapi import HTTPException
+
+from test_inventures.database import SessionLocal, engine
+from test_inventures.models import Base, ShortenedURL
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from sqlalchemy.orm import Session
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -76,6 +85,7 @@ ORDERING_OPTIONS = {
     "-alias": ShortenedURL.alias.desc(),
     "alias": ShortenedURL.alias.asc(),
 }
+
 
 def get_stats(
     db: Session, status: str | None, sort_by: str | None,
