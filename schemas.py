@@ -12,3 +12,9 @@ class URLShortener(BaseModel):
 
     class Config:
         orm_mode = True
+
+class URLShortenerRequest(BaseModel):
+    """Model for URL shortener request."""
+
+    url: str
+    custom_alias: str = None
