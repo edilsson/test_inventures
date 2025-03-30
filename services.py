@@ -3,19 +3,14 @@ from __future__ import annotations
 
 import secrets
 import string
+from collections.abc import Generator
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
 
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
 from test_inventures.database import SessionLocal, engine
 from test_inventures.models import Base, ShortenedURL
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
-
-    from sqlalchemy.orm import Session
-
 
 Base.metadata.create_all(bind=engine)
 

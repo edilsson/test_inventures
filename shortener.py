@@ -1,18 +1,15 @@
 """Shortener API Calls for application."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 import validators
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
 
 from test_inventures import services
-
-if TYPE_CHECKING:
-    from sqlalchemy.orm import Session
-
-    from test_inventures.schemas import URLShortener, URLShortenerRequest
+from test_inventures.schemas import URLShortener, URLShortenerRequest
 
 api = FastAPI()
 ALIAS_MAX_LENGTH = 10
