@@ -9,8 +9,8 @@ from datetime import UTC, datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from test_inventures.database import SessionLocal, engine
-from test_inventures.models import Base, ShortenedURL
+from back_inventures.database import SessionLocal, engine
+from back_inventures.models import Base, ShortenedURL
 
 Base.metadata.create_all(bind=engine)
 

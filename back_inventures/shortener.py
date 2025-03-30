@@ -8,8 +8,8 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
-from test_inventures import services
-from test_inventures.schemas import URLShortener, URLShortenerRequest
+from back_inventures import services
+from back_inventures.schemas import URLShortener, URLShortenerRequest
 
 api = FastAPI()
 ALIAS_MAX_LENGTH = 10
