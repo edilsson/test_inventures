@@ -1,7 +1,10 @@
+from __future__ import annotations
 import validators
-from fastapi import Depends, FastAPI, Request, Session
-from test_inventures.dataclasses import URLShortener
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import RedirectResponse
+from test_inventures.schemas import URLShortener, URLShortenerRequest
 from test_inventures import services
+from sqlalchemy.orm import Session
 from typing import Annotated
 
 api = FastAPI()
@@ -27,11 +30,16 @@ async def shorten_url(
         db=db, url=request.url, alias=request.custom_alias,
     )
 
-@api.get("/stats/{url}")
-async def get_url_stats(url: str) -> dict:
-    """Get statistics for a shortened URL."""
-    # Placeholder implementation
-    return {"url": url, "clicks": 42, "created_at": "2023-10-01"}
+@api.get("/stats")
+async def get_url_stats(
+    db: Annotated[Session, Depends(services.get_db)],
+    status: str | None = None, sort_by: str | None = None,
+    page: int | None = 1, size: int | None = 100,
+) -> list[URLShortener]:
+    """Get statistics for shortened urls."""
+    return services.get_stats(
+        db=db, status=status, sort_by=sort_by, page=page, size=size,
+    )
 
 @api.get("/{alias}")
 async def redirect_to_url(
