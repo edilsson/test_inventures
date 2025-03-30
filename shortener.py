@@ -1,21 +1,23 @@
 import validators
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Request, Session
+from test_inventures.dataclasses import URLShortener
 
 api = FastAPI()
 
-@api.post("/shorten")
-async def shorten_url(url: str, custom_alias: str = None) -> dict:
+@api.post("/shorten", response_model=URLShortener)
+async def shorten_url(
+    url: str, custom_alias: str = None, db: Session = Depends(services.get_db)
+    ):
     """Shorten a given URL with an optional custom alias."""
-
     # Base validations
     if not validators.url(url):
-        raise HTTPException(status_code=400, detail="The provided URL is invalid.")
+        services.raise_exception(detail="The provided URL is invalid.")
     if custom_alias and not validators.slug(custom_alias):
-        raise HTTPException(status_code=400, detail="The custom alias is invalid.")
-    
-    if custom_alias:
-        return {"shortened_url": f"http://short.ly/{custom_alias}"}
-    return {"shortened_url": "http://short.ly/abc123"}
+        services.raise_exception(detail="The custom alias is invalid.")
+    if custom_alias and not services.is_alias_available(custom_alias):
+        services.raise_exception(detail="You cannot use that alias.")
+
+    return services.create_shortened_url(db=db, url=url, alias=custom_alias)
 
 @api.get("/stats/{url}")
 async def get_url_stats(url: str) -> dict:
