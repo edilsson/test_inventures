@@ -11,7 +11,7 @@ class URLShortener(BaseModel):
     clicks: int = 0
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class URLShortenerRequest(BaseModel):
     """Model for URL shortener request."""
