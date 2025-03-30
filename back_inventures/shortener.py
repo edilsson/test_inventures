@@ -5,6 +5,7 @@ from typing import Annotated
 
 import validators
 from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,16 @@ from back_inventures.schemas import URLShortener, URLShortenerRequest
 
 api = FastAPI()
 ALIAS_MAX_LENGTH = 10
+
+origins = ["*"]
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @api.post("/shorten")
