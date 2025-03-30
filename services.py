@@ -1,7 +1,8 @@
-from .database import SessionLocal, engine
+from test_inventures.database import SessionLocal, engine
 from fastapi import HTTPException
-from .models import Base, ShortenedURL
+from test_inventures.models import Base, ShortenedURL
 from typing import Generator
+from datetime import datetime, UTC
 
 Base.metadata.create_all(bind=engine)
 
@@ -40,3 +41,25 @@ def generate_random_alias() -> str:
     # Placeholder for random alias generation logic
     # In a real implementation, you would generate a random string here
     return "random_alias"
+
+
+def get_by_alias(db, alias: str) -> ShortenedURL:
+    """Get a shortened URL entry by its alias."""
+    return (
+        db.query(ShortenedURL)
+        .filter(
+            ShortenedURL.alias == alias,
+            ShortenedURL.expires_at > datetime.now(tz=UTC),
+        ).first()
+    )
+
+
+def is_alias_available(db, alias: str) -> bool:
+    """Check if an alias is available."""
+    return not (
+        db.query(ShortenedURL)
+        .filter(
+            ShortenedURL.alias == alias,
+            ShortenedURL.expires_at > datetime.now(tz=UTC),
+            ).first()
+    )
