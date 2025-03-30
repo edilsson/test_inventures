@@ -4,7 +4,7 @@ from __future__ import annotations
 import secrets
 import string
 from collections.abc import Generator
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -35,7 +35,11 @@ def create_shortened_url(db: Session, url: str, alias: str | None) -> ShortenedU
         while not is_alias_available(db=db, alias=alias):
             alias = generate_random_alias()
 
-    url = ShortenedURL(original_url=url, alias=alias)
+    created_at = datetime.now(tz=UTC)
+    expires_at = created_at + timedelta(days=3)
+    url = ShortenedURL(
+        original_url=url, alias=alias, created_at=created_at, expires_at=expires_at,
+    )
     db.add(url)
     db.commit()
     db.refresh(url)
