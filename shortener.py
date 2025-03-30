@@ -2,6 +2,7 @@ import validators
 from fastapi import Depends, FastAPI, Request, Session
 from test_inventures.dataclasses import URLShortener
 from test_inventures import services
+from typing import Annotated
 
 api = FastAPI()
 ALIAS_MAX_LENGTH = 10
@@ -33,9 +34,10 @@ async def get_url_stats(url: str) -> dict:
     return {"url": url, "clicks": 42, "created_at": "2023-10-01"}
 
 @api.get("/{alias}")
-async def redirect_to_url(alias: str, request: Request, db: Session = Depends(services.get_db)) -> dict:
+async def redirect_to_url(
+    alias: str, request: Request, db: Annotated[Session, Depends(services.get_db)],
+) -> dict:
     """Redirect to the original URL based on the alias."""
-    # Placeholder implementation
     url = services.get_by_alias(db=db, alias=alias)
     if not url:
         services.raise_exception(detail=f"The URL {request.url} is not found", code=404)
