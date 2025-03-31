@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -11,7 +12,8 @@ export default function Shortener() {
     const [url, setUrl] = useState("");
     const [customAlias, setCustomAlias] = useState("");
     const [result, setResult] = useState("");
-    const [message, setMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
+    const [showAlert, setShowAlert] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,15 +25,18 @@ export default function Shortener() {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(urlData),
             });
-            console.log(response);
-            if (!response.ok) throw new Error("There was an error trying to shorten the URL");    
             const result = await response.json();
-            console.log(result);
+            if (!response.ok) {
+                throw new Error(result.detail);
+            }
 
             setResult(`Shortened URL: ${"http://localhost:8000/" + result.alias}`);
+            setAlertType("success");
+            setShowAlert(true);
         } catch (error) {
-            console.log(error);
-            setMessage(error.message);
+            setResult(error.message);
+            setAlertType("danger");
+            setShowAlert(true);
         }
     };
 
@@ -73,6 +78,16 @@ export default function Shortener() {
                     </Col>
                 </Row>
             </Form>
+        </Row>
+        <Row>
+        {
+            showAlert ? 
+                <Alert key={alertType} variant={alertType} onClose={() => setShowAlert(false)} dismissible>
+                    {result}
+                </Alert>
+                :
+                ""
+        }
         </Row>
         </>
     );
