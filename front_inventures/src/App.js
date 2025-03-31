@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Shortener from "./Shortener";
+import Shortener from "./components/Shortener";
+import Stats from "./components/Stats";
 
-import Toast from 'react-bootstrap/Toast';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Table from 'react-bootstrap/Table';
 
 const App = () => (
-  <Container fluid className="p-5">
-    <h1 className="header">Inventures URL Shortener</h1>
-    <Row>
-        <Shortener />
+  <Container fluid="md">
+    <Row className="py-5">
+      <h1 className="header">Inventures URL Shortener</h1>
     </Row>
     <Row>
-      <Col>b
-      </Col>
-      <Col>c
-      </Col>
+      <Shortener />
+    </Row>
+    <Row>
+      <Stats />
     </Row>
   </Container>
 );
