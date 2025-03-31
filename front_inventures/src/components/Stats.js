@@ -1,0 +1,66 @@
+import React, { useState } from 'react';
+import fetchData from "../fetchData";
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
+
+
+const API_STATS = "http://localhost:8000/stats"
+
+export default function Stats() {
+    const [sortField, setSortField] = useState("");
+    const [order, setOrder] = useState("");
+    const { data, loading, error } = fetchData(API_STATS);
+
+    const columns = [
+        { label: "URL", accessor: "original_url" },
+        { label: "Alias", accessor: "alias" },
+        { label: "Created at", accessor: "created_at" },
+        { label: "# Clicks", accessor: "clicks" },
+    ];
+
+    if (loading) return <p className="text-center p-4">Loading...</p>;
+    if (error) return <p className="text-center p-4 text-red-500">{error}</p>;
+
+    const handleSortingChange = (accessor) => {
+        console.log(accessor);
+        const sortOrder = accessor === sortField && order === "asc" ? "desc" : "asc";
+        console.log(sortOrder);
+        setSortField(accessor);
+        setOrder(sortOrder);
+        handleSorting(accessor, sortOrder);
+    };
+
+    return (
+        <>
+            <Row>
+                <Col>
+                    <h5>Shortened URLs</h5>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                {columns.map(({ label, accessor }) => (
+                                <th key={accessor} onClick={() => handleSortingChange(accessor)}>{label}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((urlData) => (
+                            <tr key={urlData.alias}>
+                                <td>{urlData.original_url}</td>
+                                <td>{urlData.alias}</td>
+                                <td>{urlData.created_at}</td>
+                                <td>{urlData.clicks}</td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </Col>
+            </Row>
+        </>
+    );
+};
