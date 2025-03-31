@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import fetchData from "../fetchData";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -8,10 +8,8 @@ import Table from 'react-bootstrap/Table';
 const API_STATS = "http://localhost:8000/stats"
 
 export default function Stats() {
-    const [sortField, setSortField] = useState("");
-    const [order, setOrder] = useState("");
     const { data, loading, error } = fetchData(API_STATS);
-
+    
     const columns = [
         { label: "URL", accessor: "original_url" },
         { label: "Alias", accessor: "alias" },
@@ -21,15 +19,6 @@ export default function Stats() {
 
     if (loading) return <p className="text-center p-4">Loading...</p>;
     if (error) return <p className="text-center p-4 text-red-500">{error}</p>;
-
-    const handleSortingChange = (accessor) => {
-        console.log(accessor);
-        const sortOrder = accessor === sortField && order === "asc" ? "desc" : "asc";
-        console.log(sortOrder);
-        setSortField(accessor);
-        setOrder(sortOrder);
-        handleSorting(accessor, sortOrder);
-    };
 
     return (
         <>
@@ -44,7 +33,7 @@ export default function Stats() {
                         <thead>
                             <tr>
                                 {columns.map(({ label, accessor }) => (
-                                <th key={accessor} onClick={() => handleSortingChange(accessor)}>{label}</th>
+                                    <th key={accessor}>{label}</th>
                                 ))}
                             </tr>
                         </thead>
