@@ -13,7 +13,7 @@ export default function Stats() {
     const columns = [
         { label: "URL", accessor: "original_url" },
         { label: "Alias", accessor: "alias" },
-        { label: "Created at", accessor: "created_at" },
+        { label: "Created at (UTC)", accessor: "created_at" },
         { label: "# Clicks", accessor: "clicks" },
     ];
 
