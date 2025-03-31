@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
 
-const API_STATS = "http://localhost:8000/stats"
+const API_STATS = "http://0.0.0.0:8000/stats"
 
 export default function Stats() {
     const { data, loading, error } = fetchData(API_STATS);
