@@ -5,8 +5,8 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
-
-const API_SHORTENER = "http://0.0.0.0:8000/shorten"
+const currentHost = `${window.location.protocol}//${window.location.hostname}`;
+const API_SHORTENER = currentHost + ":8000/shorten"
 
 export default function Shortener() {
     const [url, setUrl] = useState("");
@@ -14,7 +14,6 @@ export default function Shortener() {
     const [result, setResult] = useState("");
     const [alertType, setAlertType] = useState("");
     const [showAlert, setShowAlert] = useState(null);
-    const currentHost = `${window.location.protocol}//${window.location.hostname}`;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
